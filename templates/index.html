@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Popularity Checker</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #121212;
+            color: white;
+        }
+        .container {
+            background-color: #282828;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+        .artist-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+        .popularity-meter {
+            font-size: 48px;
+            font-weight: bold;
+            color: #1DB954;
+            margin: 20px 0;
+        }
+        h1 {
+            color: #1DB954;
+            margin-bottom: 30px;
+        }
+        .artist-name {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Spotify Artist Popularity</h1>
+        {% if image_url %}
+        <img src="{{ image_url }}" alt="{{ artist_name }}" class="artist-image">
+        {% endif %}
+        <div class="artist-name">{{ artist_name }}</div>
+        <div class="popularity-meter">{{ popularity }}</div>
+        <p>Popularity Score (0-100)</p>
+    </div>
+</body>
+</html>
