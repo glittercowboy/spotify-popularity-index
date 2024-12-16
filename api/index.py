@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='../templates')
 
 # Initialize Spotify client
 client_credentials_manager = SpotifyClientCredentials(
