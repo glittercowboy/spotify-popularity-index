@@ -26,12 +26,26 @@
             height: 200px;
             border-radius: 50%;
             margin-bottom: 20px;
+            object-fit: cover;
+        }
+        .release-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            object-fit: cover;
         }
         .popularity-meter {
             font-size: 48px;
             font-weight: bold;
             color: #1DB954;
             margin: 20px 0;
+        }
+        .release-popularity {
+            font-size: 36px;
+            font-weight: bold;
+            color: #1DB954;
+            margin: 15px 0;
         }
         h1 {
             color: #1DB954;
@@ -40,6 +54,33 @@
         .artist-name {
             font-size: 24px;
             margin-bottom: 20px;
+        }
+        .release-name {
+            font-size: 20px;
+            margin: 10px 0;
+            color: #1DB954;
+        }
+        .release-date {
+            font-size: 16px;
+            color: #b3b3b3;
+            margin-bottom: 10px;
+        }
+        .divider {
+            border-top: 1px solid #404040;
+            margin: 30px 0;
+        }
+        .spotify-link {
+            display: inline-block;
+            background-color: #1DB954;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+        .spotify-link:hover {
+            background-color: #1ed760;
         }
     </style>
 </head>
@@ -51,7 +92,22 @@
         {% endif %}
         <div class="artist-name">{{ artist_name }}</div>
         <div class="popularity-meter">{{ popularity }}</div>
-        <p>Popularity Score (0-100)</p>
+        <p>Artist Popularity Score (0-100)</p>
+
+        {% if latest_release %}
+        <div class="divider"></div>
+        <h2>Latest Release</h2>
+        {% if latest_release.image_url %}
+        <img src="{{ latest_release.image_url }}" alt="{{ latest_release.name }}" class="release-image">
+        {% endif %}
+        <div class="release-name">{{ latest_release.name }}</div>
+        <div class="release-date">Released: {{ latest_release.release_date }}</div>
+        <div class="release-popularity">{{ latest_release.popularity }}</div>
+        <p>Release Popularity Score (0-100)</p>
+        {% if latest_release.url %}
+        <a href="{{ latest_release.url }}" target="_blank" class="spotify-link">Listen on Spotify</a>
+        {% endif %}
+        {% endif %}
     </div>
 </body>
 </html>

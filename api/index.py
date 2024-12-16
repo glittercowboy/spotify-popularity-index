@@ -29,6 +29,31 @@ except Exception as e:
     print(f"Error initializing Spotify client: {str(e)}")
     sp = None
 
+def get_latest_release(artist_id):
+    try:
+        # Get the artist's albums
+        albums = sp.artist_albums(artist_id, album_type='album,single', limit=50)
+        
+        if not albums or not albums['items']:
+            return None
+        
+        # Sort by release date and get the most recent
+        latest_release = max(albums['items'], key=lambda x: x['release_date'])
+        
+        # Get full album details to get popularity
+        latest_release_full = sp.album(latest_release['id'])
+        
+        return {
+            'name': latest_release['name'],
+            'release_date': latest_release['release_date'],
+            'popularity': latest_release_full['popularity'],
+            'image_url': latest_release['images'][0]['url'] if latest_release['images'] else None,
+            'url': latest_release['external_urls']['spotify'] if 'external_urls' in latest_release else None
+        }
+    except Exception as e:
+        print(f"Error getting latest release: {str(e)}")
+        return None
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
@@ -47,10 +72,14 @@ def catch_all(path):
         # Get artist info
         artist = sp.artist(path)
         
+        # Get latest release info
+        latest_release = get_latest_release(path)
+        
         return render_template('index.html', 
                              artist_name=artist['name'],
                              popularity=artist['popularity'],
-                             image_url=artist['images'][0]['url'] if artist['images'] else None)
+                             image_url=artist['images'][0]['url'] if artist['images'] else None,
+                             latest_release=latest_release)
     except Exception as e:
         print(f"Error processing request: {str(e)}")
         return render_template('error.html', 
