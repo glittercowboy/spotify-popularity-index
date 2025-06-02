@@ -30,16 +30,17 @@ python app.py
 
 5. Access the application at:
 ```
-http://localhost:5001/<artist_id>
+http://localhost:5001
 ```
-Replace `<artist_id>` with the Spotify artist ID you want to check.
 
-## Finding Your Spotify Artist ID
+## Using the Application
 
-You can find your Spotify artist ID by:
-1. Going to your Spotify artist profile
-2. Clicking "Share"
-3. Selecting "Copy Spotify URI"
-4. The ID is the string after "spotify:artist:"
-
-Example: For the URI `spotify:artist:0xD1RASjJGXnTh5NxdrKxF`, the artist ID is `0xD1RASjJGXnTh5NxdrKxF`
+1. **Search for Artists**: Simply type an artist's name in the search bar
+2. **View Artist Stats**: Click on any artist from the search results to see:
+   - Current popularity score (0-100)
+   - Latest release information
+   - Full discography with popularity scores for each release
+3. **Direct Access**: You can also directly navigate to an artist using their Spotify ID:
+   ```
+   http://localhost:5001/<artist_id>
+   ```

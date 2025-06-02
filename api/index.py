@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 import os
@@ -54,13 +54,51 @@ def get_latest_release(artist_id):
         print(f"Error getting latest release: {str(e)}")
         return None
 
+def get_discography(artist_id, offset=0, limit=10):
+    try:
+        # Get the artist's albums with pagination
+        albums = sp.artist_albums(artist_id, album_type='album,single', limit=limit, offset=offset)
+        
+        if not albums or not albums['items']:
+            return {'releases': [], 'total': 0, 'has_more': False}
+        
+        # Get full details for each album to include popularity
+        releases = []
+        for album in albums['items']:
+            try:
+                album_full = sp.album(album['id'])
+                releases.append({
+                    'id': album['id'],
+                    'name': album['name'],
+                    'release_date': album['release_date'],
+                    'popularity': album_full['popularity'],
+                    'album_type': album['album_type'].title(),
+                    'total_tracks': album['total_tracks'],
+                    'image_url': album['images'][0]['url'] if album['images'] else None,
+                    'url': album['external_urls']['spotify'] if 'external_urls' in album else None
+                })
+            except Exception as e:
+                print(f"Error getting album details for {album['id']}: {str(e)}")
+                continue
+        
+        # Sort by release date (newest first)
+        releases.sort(key=lambda x: x['release_date'], reverse=True)
+        
+        return {
+            'releases': releases,
+            'total': albums['total'],
+            'has_more': offset + limit < albums['total']
+        }
+    except Exception as e:
+        print(f"Error getting discography: {str(e)}")
+        return {'releases': [], 'total': 0, 'has_more': False}
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def catch_all(path):
     try:
         if not path:
-            return render_template('error.html', 
-                                error="Please provide a Spotify artist ID in the URL (e.g., /0xD1RASjJGXnTh5NxdrKxF)")
+            return render_template('home.html')
         
         if not sp:
             error_msg = "Spotify API configuration error. "
@@ -75,15 +113,70 @@ def catch_all(path):
         # Get latest release info
         latest_release = get_latest_release(path)
         
+        # Get initial discography (first 50 releases)
+        discography = get_discography(path, offset=0, limit=50)
+        
         return render_template('index.html', 
                              artist_name=artist['name'],
+                             artist_id=path,
                              popularity=artist['popularity'],
                              image_url=artist['images'][0]['url'] if artist['images'] else None,
-                             latest_release=latest_release)
+                             latest_release=latest_release,
+                             discography=discography)
     except Exception as e:
         print(f"Error processing request: {str(e)}")
         return render_template('error.html', 
                              error="Invalid artist ID or API error. Please check your Spotify artist ID.")
+
+@app.route('/api/discography/<artist_id>')
+def get_more_releases(artist_id):
+    try:
+        if not sp:
+            return {'error': 'Spotify API not configured'}, 500
+        
+        # Get offset from query parameters
+        offset = int(request.args.get('offset', 0))
+        limit = int(request.args.get('limit', 50))
+        
+        # Get discography with pagination
+        discography = get_discography(artist_id, offset=offset, limit=limit)
+        
+        return discography
+    except Exception as e:
+        print(f"Error getting more releases: {str(e)}")
+        return {'error': 'Failed to load releases'}, 500
+
+@app.route('/api/search')
+def search_artists():
+    try:
+        if not sp:
+            return {'error': 'Spotify API not configured'}, 500
+        
+        # Get search query
+        query = request.args.get('q', '').strip()
+        if not query:
+            return {'artists': []}
+        
+        # Search for artists
+        results = sp.search(q=query, type='artist', limit=10)
+        
+        artists = []
+        for artist in results['artists']['items']:
+            artists.append({
+                'id': artist['id'],
+                'name': artist['name'],
+                'popularity': artist['popularity'],
+                'image_url': artist['images'][0]['url'] if artist['images'] else None,
+                'followers': artist['followers']['total']
+            })
+        
+        # Sort by popularity
+        artists.sort(key=lambda x: x['popularity'], reverse=True)
+        
+        return {'artists': artists}
+    except Exception as e:
+        print(f"Error searching artists: {str(e)}")
+        return {'error': 'Failed to search artists'}, 500
 
 # For local development
 if __name__ == '__main__':

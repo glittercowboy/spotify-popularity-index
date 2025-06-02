@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error - Artist Popularity Checker</title>
+    <title>Spotify Artist Popularity Index</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -13,39 +13,48 @@
             text-align: center;
             background-color: #121212;
             color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .error-container {
+        .welcome-container {
             background-color: #282828;
-            padding: 30px;
+            padding: 60px 40px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-top: 50px;
+            width: 100%;
+            max-width: 600px;
         }
         h1 {
-            color: #ff4444;
+            color: #1DB954;
+            font-size: 36px;
+            margin-bottom: 10px;
         }
-        .error-message {
-            color: #ff4444;
-            margin: 20px 0;
+        .subtitle {
+            color: #b3b3b3;
+            font-size: 18px;
+            margin-bottom: 40px;
         }
         .search-container {
             position: relative;
             max-width: 500px;
-            margin: 30px auto 0;
+            margin: 0 auto;
         }
         .search-input {
             width: 100%;
-            padding: 12px 20px;
+            padding: 16px 24px;
             background-color: #181818;
-            border: 1px solid #404040;
+            border: 2px solid #404040;
             border-radius: 500px;
             color: white;
-            font-size: 16px;
+            font-size: 18px;
             outline: none;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
         }
         .search-input:focus {
             border-color: #1DB954;
+            transform: scale(1.02);
         }
         .search-input::placeholder {
             color: #b3b3b3;
@@ -81,8 +90,8 @@
             background-color: #181818;
         }
         .search-result-image {
-            width: 48px;
-            height: 48px;
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
             margin-right: 16px;
             object-fit: cover;
@@ -100,28 +109,63 @@
             color: #b3b3b3;
         }
         .search-result-popularity {
-            font-size: 16px;
+            font-size: 20px;
             font-weight: bold;
             color: #1DB954;
             margin-left: auto;
         }
-        .or-text {
-            color: #b3b3b3;
-            margin: 20px 0 10px;
+        .features {
+            margin-top: 60px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .feature {
+            padding: 20px;
+            background-color: #181818;
+            border-radius: 6px;
+        }
+        .feature-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .feature-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .feature-desc {
             font-size: 14px;
+            color: #b3b3b3;
         }
     </style>
 </head>
 <body>
-    <div class="error-container">
-        <h1>Error</h1>
-        <div class="error-message">{{ error }}</div>
-        
-        <div class="or-text">— OR —</div>
+    <div class="welcome-container">
+        <h1>Spotify Artist Popularity Index</h1>
+        <p class="subtitle">Track artist popularity and explore discographies</p>
         
         <div class="search-container">
-            <input type="text" class="search-input" id="searchInput" placeholder="Search for an artist...">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search for any artist..." autofocus>
             <div class="search-dropdown" id="searchDropdown"></div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">Popularity Score</div>
+                <div class="feature-desc">Real-time artist popularity (0-100)</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">💿</div>
+                <div class="feature-title">Full Discography</div>
+                <div class="feature-desc">Browse all releases with scores</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🎵</div>
+                <div class="feature-title">Latest Release</div>
+                <div class="feature-desc">Track newest album performance</div>
+            </div>
         </div>
     </div>
 
